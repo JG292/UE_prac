@@ -1,0 +1,17 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{47266686-4913-1625-4D37-648451E19267}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Proj13",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG"
+			]
+		}
+	]
+}
