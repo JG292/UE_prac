@@ -12,7 +12,7 @@ ATargetBase::ATargetBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SceneRoot"));
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("TargetSceneRoot"));
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	StaticMeshComp->SetupAttachment(RootComponent);

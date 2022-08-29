@@ -38,4 +38,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		float VeloY;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bIsThrowingGrenade;
 };

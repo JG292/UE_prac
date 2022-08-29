@@ -4,6 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Components/TextBlock.h"
+#include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Components/SphereComponent.h"
+#include "DrawDebugHelpers.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SpotLightComponent.h"
+
 #include "Person.generated.h"
 
 UCLASS()
@@ -53,10 +67,10 @@ public:
 	UFUNCTION()
 		void MoveY(float Value);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void StartJump();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void StopJump();
 
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
@@ -94,7 +108,16 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void MulticastSwitchSpotlight();
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerStartThrow();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastStartThrow();
+
 	UFUNCTION()
+	void StartThrow();
+
+	UFUNCTION(BlueprintCallable)
 		void TraceAndThrow();
 
 	UFUNCTION()
@@ -153,4 +176,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<class AGrenade> GrenadeClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bInLoginMap;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bThrowGrenade;
+
 };

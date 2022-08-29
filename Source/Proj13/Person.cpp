@@ -3,18 +3,6 @@
 
 #include "Person.h"
 
-#include "Kismet/GameplayStatics.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Components/TextBlock.h"
-#include "Components/WidgetComponent.h"
-#include "Net/UnrealNetwork.h"
-#include "Engine/SkeletalMeshSocket.h"
-#include "Components/SphereComponent.h"
-#include "DrawDebugHelpers.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/SpotLightComponent.h"
 
 #include "Gun.h"
 #include "Bullet.h"
@@ -46,6 +34,7 @@ APerson::APerson()
 	ScoreWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScoreWidget"));
 	ScoreWidget->SetupAttachment(RootComponent);
 
+	bThrowGrenade = false;
 }
 
 // Called when the game starts or when spawned
@@ -88,7 +77,9 @@ void APerson::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &APerson::StartEquipGun);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APerson::TraceAndFire);
 	PlayerInputComponent->BindAction("Spotlight", IE_Pressed, this, &APerson::SwitchSpotlight);
-	PlayerInputComponent->BindAction("Grenade", IE_Pressed, this, &APerson::TraceAndThrow);
+	//PlayerInputComponent->BindAction("Grenade", IE_Pressed, this, &APerson::TraceAndThrow);
+	//PlayerInputComponent->BindAction("Grenade", IE_Pressed, this, &APerson::StartThrow);
+	PlayerInputComponent->BindAction("Grenade", IE_Pressed, this, &APerson::ServerStartThrow);
 
 
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &APerson::TouchStarted);
@@ -231,6 +222,8 @@ void APerson::EquipGun(class AGun *InGun) {
 	EquippedGun->ShowPickupWidget(false);
 	EquippedGun->HitComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	// comply with animation
+	GetCharacterMovement()->JumpZVelocity = 420;
 }
 
 void APerson::ServerStartEquipGun_Implementation() {
@@ -257,6 +250,21 @@ void APerson::MulticastSwitchSpotlight_Implementation() {
 	}
 }
 
+void APerson::ServerStartThrow_Implementation() {
+	MulticastStartThrow();
+}
+
+void APerson::MulticastStartThrow_Implementation() {
+	StartThrow();
+}
+
+void APerson::StartThrow() {
+	bThrowGrenade = true;
+	//if (ThrowGrenadeAnim) {
+	//	GetMesh()->PlayAnimation(ThrowGrenadeAnim, false);
+	//}
+}
+
 void APerson::TraceAndThrow() {
 
 	if (BulletClass) {
@@ -268,7 +276,7 @@ void APerson::TraceAndThrow() {
 
 		GetActorEyesViewPoint(ActorLocation, ActorRotation);
 
-		MuzzleOffset.Set(100.f, 0.f, 0.f);
+		MuzzleOffset.Set(100.f, 0.f, 50.f);
 
 		FVector MuzzleLocation = ActorLocation + FTransform(ActorRotation).TransformVector(MuzzleOffset);
 		FRotator MuzzleRotation = ActorRotation;
@@ -302,6 +310,8 @@ void APerson::ThrowInDirection(const FVector &Location, const FRotator &Rotation
 		}
 
 	}
+
+	bThrowGrenade = false;
 }
 
 void APerson::TraceAndFire() {

@@ -33,5 +33,7 @@ void UAnimInst_Person::NativeUpdateAnimation(float DeltaTime) {
 	FVector LocalVelo = FTransform(PersonRotation).InverseTransformVector(Velocity);
 	VeloX = LocalVelo.X;
 	VeloY = LocalVelo.Y;
+
+	bIsThrowingGrenade = ThisPerson->bThrowGrenade;
 }
 
