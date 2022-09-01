@@ -26,6 +26,7 @@ void UAnimInst_Person::NativeUpdateAnimation(float DeltaTime) {
 	Speed = Velocity.Size();
 
 	bInAir = ThisPerson->GetCharacterMovement()->IsFalling();
+	//bInAir = ThisPerson->bPressedJump;
 	bAccel = (ThisPerson->GetCharacterMovement()->GetCurrentAcceleration().Size()) > 0.f;
 	bEquipGun = ThisPerson->EquippedGun != nullptr;
 
